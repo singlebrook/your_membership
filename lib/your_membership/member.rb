@@ -387,8 +387,14 @@ module YourMembership
       end
 
       if response['YourMembership_Response']['Member.IsAuthenticated']
-        # If everything is ok retun the authenticated users ID
-        return response['YourMembership_Response']['Member.IsAuthenticated']['ID']
+        # If everything is ok return the authenticated users ID
+        member_id = response['YourMembership_Response']['Member.IsAuthenticated']['ID']
+        if member_id.nil? || member_id == ''
+          raise 'Invalid response detected. ErrCode was zero, but ' +
+            'YourMembership_Response > Member.IsAuthenticated > ID was blank' +
+            ": #{response.inspect}"
+        end
+        member_id
       else
         # If there is no ID in the data returned then the session is not
         # authenticated.
